@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Facciamo pace? ❤️</title>
+<meta name="theme-color" content="#FFF8E3">
+<meta name="description" content="Una piccola sorpresa per te ❤️">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chiara, facciamo pace? ❤️">
+<meta property="og:description" content="Apri e rispondi. Ma attenzione: il NO è un po’ timido!">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9D%A4%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFF8E3;
+    --paper-edge: #E8D9A8;
+    --ink: #333333;
+    --red: #E8453C;
+    --green: #2FBF4D;
+    --pink: #FF6F91;
+    --card: #FFD9E3;
+    --hand: 'Patrick Hand', 'Chalkboard SE', 'Marker Felt', 'Comic Sans MS', cursive;
+    --wobble: 26px 22px 28px 20px / 22px 28px 20px 26px;
+    --wobble-s: 18px 14px 20px 15px / 15px 19px 14px 18px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none;
+    -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;
+  }
+  body { font-family: var(--hand); color: var(--ink); background: var(--paper); }
+  body::after {
+    content: ''; position: fixed;
+    inset: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) 8px;
+    border: 3px solid var(--paper-edge); border-radius: 14px; pointer-events: none; z-index: 5;
+  }
+  .deco { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .deco svg { position: absolute; display: block; }
+  .deco .sun   { top: max(18px, env(safe-area-inset-top)); left: 18px; width: clamp(70px, 22vw, 104px); }
+  .deco .cloud { top: max(40px, env(safe-area-inset-top)); right: 76px; width: clamp(74px, 24vw, 110px); }
+  .deco .flag  { left: 20px; bottom: 34px; height: clamp(110px, 20dvh, 170px); }
+  .deco .grass { left: 0; right: 0; bottom: 14px; width: 100%; height: 22px; }
+  .stage {
+    position: relative; z-index: 2; height: 100dvh; min-height: 100%;
+    display: grid; place-items: center;
+    padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+             max(18px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  .card {
+    width: min(90vw, 400px); min-height: 370px; padding: 22px 18px 20px;
+    background: var(--card); border: 4px solid var(--ink); border-radius: var(--wobble);
+    box-shadow: 6px 8px 0 rgba(51, 51, 51, .14);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; text-align: center;
+    transition: transform .55s cubic-bezier(.5, -0.3, .7, .3), opacity .45s ease;
+  }
+  .card.out { transform: scale(.6) translateY(30px); opacity: 0; pointer-events: none; }
+  .title { width: 100%; height: auto; display: block; }
+  .title .heart { transform-box: fill-box; transform-origin: center; animation: beat 1.6s ease-in-out infinite; }
+  @keyframes beat {
+    0%, 60%, 100% { transform: scale(1); }
+    15% { transform: scale(1.2); }
+    30% { transform: scale(1); }
+    42% { transform: scale(1.12); }
+  }
+  .buttons { width: 100%; min-height: 66px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .btn {
+    appearance: none; padding: 0; cursor: pointer; font-family: var(--hand); color: var(--ink);
+    border: 4px solid var(--ink); border-radius: var(--wobble-s); box-shadow: 0 5px 0 var(--ink);
+    touch-action: manipulation; transition: transform .1s ease, box-shadow .1s ease;
+  }
+  .btn svg { display: block; width: 100%; height: 100%; }
+  .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+  .btn:focus-visible { outline: 4px solid #5BA7E8; outline-offset: 3px; }
+  .yes {
+    --p: 0; background: var(--green);
+    width: calc(46% + 54% * var(--p)); height: calc(62px + 88px * var(--p));
+    transition: width .6s cubic-bezier(.34, 1.4, .5, 1), height .6s cubic-bezier(.34, 1.4, .5, 1),
+                transform .1s ease, box-shadow .1s ease;
+  }
+  .no { background: var(--red); flex: 0 1 132px; min-width: 100px; height: 62px; }
+  .no.free {
+    position: fixed; left: 0; top: 0; z-index: 60; margin: 0; flex: none; touch-action: none;
+    transition: transform .42s cubic-bezier(.22, 1.25, .36, 1);
+  }
+  .no.broken {
+    background: #F1EFE6; border: 3px dashed var(--ink); box-shadow: none; cursor: default;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 16px; font-size: 1.2rem; line-height: 1.15; text-align: center;
+    max-width: min(88vw, 340px); animation: shake .6s ease-in-out 1;
+  }
+  .no.broken svg { width: 28px; height: 28px; flex: none; }
+  @keyframes shake {
+    0%, 100% { rotate: 0deg; } 15% { rotate: -6deg; } 30% { rotate: 5deg; }
+    45% { rotate: -4deg; } 60% { rotate: 3deg; } 80% { rotate: -1.5deg; }
+  }
+
+  /* ---------- Fumetto dei messaggi ---------- */
+  .bubble {
+    position: fixed; left: 50%; top: max(22px, calc(env(safe-area-inset-top) + 12px));
+    z-index: 55; max-width: min(86vw, 340px); padding: 10px 18px;
+    background: #fff; border: 3px solid var(--ink); border-radius: var(--wobble-s);
+    box-shadow: 0 4px 0 var(--ink); font-size: 1.3rem; line-height: 1.2; text-align: center;
+    pointer-events: none; opacity: 0; transform: translate(-50%, -14px) scale(.85);
+    transition: opacity .25s ease, transform .35s cubic-bezier(.3, 1.6, .5, 1);
+  }
+  .bubble.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
+  .screen.final {
+    position: fixed; inset: 0; z-index: 70; background: var(--paper);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+    padding: max(20px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
+    text-align: center; opacity: 0; pointer-events: none; transition: opacity .6s ease;
+  }
+  .screen.final.show { opacity: 1; pointer-events: auto; }
+  .scene { display: block; width: min(100%, 440px); max-height: calc(100dvh - 60px); min-height: 300px; }
+  .pop, .conf, .sparks { opacity: 0; }
+  .pop { transform-box: fill-box; transform-origin: 50% 100%; }
+  .conf { transform-box: fill-box; transform-origin: center; }
+  .boy { opacity: 0; }
+  .final.show .pop { animation: pop .7s cubic-bezier(.3, 1.7, .5, 1) both; animation-delay: calc(var(--i) * .08s + .3s); }
+  @keyframes pop {
+    0% { opacity: 0; transform: translateY(40px) scale(.3) rotate(-12deg); }
+    100% { opacity: 1; transform: none; }
+  }
+  .final.show .boy { animation: boyin 1s cubic-bezier(.2, 1.35, .4, 1) .8s both; }
+  @keyframes boyin { 0% { opacity: 0; transform: translateY(170px); } 100% { opacity: 1; transform: none; } }
+  .final.show .conf { animation: confin .5s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(var(--d) * 1s + 1s); }
+  @keyframes confin { 0% { opacity: 0; transform: scale(.2) rotate(-40deg); } 100% { opacity: 1; transform: none; } }
+  .final.show .sparks { animation: fadein .5s ease 2.5s both; }
+  @keyframes fadein { to { opacity: 1; } }
+
+  #fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; }
+  .sound {
+    position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right));
+    z-index: 200; width: 46px; height: 46px; padding: 0; border: 3px solid var(--ink); border-radius: 50%;
+    background: #fff; box-shadow: 0 3px 0 var(--ink); cursor: pointer; touch-action: manipulation;
+    display: grid; place-items: center;
+  }
+  .sound svg { width: 26px; height: 26px; display: block; }
+  .sound .mute { display: none; }
+  .sound.off .waves { display: none; }
+  .sound.off .mute { display: inline; }
+  .sound:focus-visible { outline: 4px solid #5BA7E8; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .title .heart { animation: none; }
+    .final.show .pop, .final.show .conf, .final.show .boy, .final.show .sparks {
+      animation-duration: .01s; animation-delay: 0s !important;
+    }
+    .no.free { transition-duration: .15s; }
+    .bubble { transition-duration: .01s; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="lC" d="M27 11 Q22 3 14 4 Q4 6 4 22 Q4 40 14 40 Q22 41 27 34"/>
+    <path id="lH" d="M5 4 L6 42 M26 3 L25 41 M6 23 L25 22"/>
+    <path id="lI" d="M4 5 L18 4 M11 4 L11 42 M4 41 L18 42"/>
+    <path id="lA" d="M3 42 L15 4 L27 42 M8 29 L22 28"/>
+    <path id="lR" d="M6 42 L5 4 Q28 2 27 14 Q26 26 6 24 M16 24 L27 42"/>
+    <path id="lF" d="M7 41 L5 5 L27 3 M6 23 L22 21"/>
+    <path id="lM" d="M4 42 L5 4 L16 27 L27 4 L29 42"/>
+    <path id="lO" d="M15 4 Q27 4 27 22 Q27 41 15 41 Q3 41 3 22 Q3 4 15 4 Z"/>
+    <path id="lP" d="M6 42 L5 4 Q28 2 27 14 Q26 26 6 24"/>
+    <path id="lE" d="M26 4 L6 4 L6 42 L27 41 M6 22 L21 22"/>
+    <path id="lQ" d="M5 12 Q6 3 15 3 Q26 3 25 12 Q24 20 15 24 L15 31 M15 41 L15 41.2"/>
+    <path id="lS" d="M25 10 Q22 3 14 3 Q5 4 6 12 Q7 20 15 22 Q25 25 25 33 Q24 41 14 41 Q6 41 3 34"/>
+    <path id="lN" d="M5 42 L6 4 L26 42 L27 4"/>
+    <path id="lY" d="M4 4 L15 24 L26 4 M15 24 L15 42"/>
+  </defs>
+</svg>
+
+<div class="deco" aria-hidden="true">
+  <svg class="sun" viewBox="0 0 124 124">
+    <circle cx="62" cy="62" r="26" fill="#FFD93B" stroke="#F4A300" stroke-width="3"/>
+    <g stroke="#F4A300" stroke-width="4" stroke-linecap="round">
+      <line x1="62" y1="22" x2="62" y2="12"/><line x1="62" y1="102" x2="62" y2="112"/>
+      <line x1="22" y1="62" x2="12" y2="62"/><line x1="102" y1="62" x2="112" y2="62"/>
+      <line x1="34" y1="34" x2="27" y2="27"/><line x1="90" y1="90" x2="97" y2="97"/>
+      <line x1="90" y1="34" x2="97" y2="27"/><line x1="34" y1="90" x2="27" y2="97"/>
+    </g>
+  </svg>
+  <svg class="cloud" viewBox="246 26 88 50">
+    <path d="M262 66 Q250 66 252 54 Q254 42 268 46 Q274 30 292 38 Q306 32 312 48 Q330 48 328 62 Q328 72 316 70 L270 70 Q262 72 262 66 Z" fill="#CFE8FF" stroke="#5BA7E8" stroke-width="3"/>
+  </svg>
+  <svg class="flag" viewBox="22 254 78 140">
+    <line x1="30" y1="258" x2="30" y2="390" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M32 260 L94 258 L96 298 L33 300 Z" fill="#FFFFFF" stroke="#333" stroke-width="2.5" stroke-linejoin="round"/>
+    <g fill="#D62B2B"><rect x="33" y="260" width="62" height="5"/><rect x="33" y="270" width="63" height="5"/><rect x="33" y="280" width="63" height="5"/><rect x="33" y="290" width="63" height="5"/></g>
+    <rect x="33" y="260" width="28" height="22" fill="#2F5FB8" stroke="#333" stroke-width="2"/>
+    <g fill="#FFFFFF"><circle cx="40" cy="266" r="1.8"/><circle cx="48" cy="266" r="1.8"/><circle cx="55" cy="266" r="1.8"/><circle cx="44" cy="272" r="1.8"/><circle cx="52" cy="272" r="1.8"/><circle cx="40" cy="278" r="1.8"/><circle cx="48" cy="278" r="1.8"/><circle cx="55" cy="278" r="1.8"/></g>
+  </svg>
+  <svg class="grass" viewBox="0 0 380 22" preserveAspectRatio="none">
+    <path d="M0 14 Q20 2 40 14 Q60 2 80 14 Q100 2 120 14 Q140 2 160 14 Q180 2 200 14 Q220 2 240 14 Q260 2 280 14 Q300 2 320 14 Q340 2 360 14 Q372 6 380 12" stroke="#4CAF50" stroke-width="4" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+  </svg>
+</div>
+
+<main class="stage">
+  <section class="card" id="card" aria-labelledby="q">
+    <h1 id="q" style="margin:0">
+      <svg class="title" viewBox="0 0 300 172" role="img" aria-label="Chiara, facciamo pace?">
+        <g stroke="#E8453C" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <g transform="rotate(-1.5 150 25)"><g transform="translate(57 4) scale(.9)">
+            <use href="#lC" transform="rotate(-2 15 22)"/>
+            <use href="#lH" transform="translate(37 0) rotate(2 15 22)"/>
+            <use href="#lI" transform="translate(74 0) rotate(-3 15 22)"/>
+            <use href="#lA" transform="translate(103 0) rotate(2 15 22)"/>
+            <use href="#lR" transform="translate(140 0) rotate(-2 15 22)"/>
+            <use href="#lA" transform="translate(177 0) rotate(3 15 22)"/>
+          </g></g>
+          <g transform="rotate(1 150 74)"><g transform="translate(19.5 54) scale(.9)">
+            <use href="#lF" transform="rotate(-2 15 22)"/>
+            <use href="#lA" transform="translate(38 0) rotate(2 15 22)"/>
+            <use href="#lC" transform="translate(76 0) rotate(-1 15 22)"/>
+            <use href="#lC" transform="translate(114 0) rotate(3 15 22)"/>
+            <use href="#lI" transform="translate(152 0) rotate(-3 15 22)"/>
+            <use href="#lA" transform="translate(182 0) rotate(2 15 22)"/>
+            <use href="#lM" transform="translate(220 0) rotate(-2 15 22)"/>
+            <use href="#lO" transform="translate(260 0) rotate(1 15 22)"/>
+          </g></g>
+          <g transform="rotate(-1.5 150 138)"><g transform="translate(22 112) scale(1.2)">
+            <use href="#lP" transform="rotate(-2 15 22)"/>
+            <use href="#lA" transform="translate(37 0) rotate(2 15 22)"/>
+            <use href="#lC" transform="translate(74 0) rotate(-2 15 22)"/>
+            <use href="#lE" transform="translate(111 0) rotate(3 15 22)"/>
+            <use href="#lQ" transform="translate(148 0) rotate(-2 15 22)"/>
+          </g></g>
+        </g>
+        <g class="heart"><g transform="translate(246 122) scale(.95)">
+          <path d="M22 12 C10 0 0 8 6 18 C10 24 22 32 22 32 C22 32 34 24 38 18 C44 8 34 0 22 12 Z" fill="#FF6F91" stroke="#333" stroke-width="3.2" stroke-linejoin="round"/>
+        </g></g>
+      </svg>
+    </h1>
+
+    <div class="buttons" id="row">
+      <button class="btn yes" id="yes" type="button" aria-label="SI">
+        <svg viewBox="0 0 130 60" aria-hidden="true">
+          <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <g transform="translate(20 12) scale(.8)">
+              <use href="#lS" stroke="#333" stroke-width="13"/><use href="#lS" stroke="#fff" stroke-width="8"/>
+              <g transform="translate(34 0)"><use href="#lI" stroke="#333" stroke-width="13"/><use href="#lI" stroke="#fff" stroke-width="8"/></g>
+            </g>
+          </g>
+          <g transform="translate(79 15) scale(.75)">
+            <path d="M22 12 C10 0 0 8 6 18 C10 24 22 32 22 32 C22 32 34 24 38 18 C44 8 34 0 22 12 Z" fill="#FF6F91" stroke="#333" stroke-width="3.6" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </button>
+
+      <button class="btn no" id="no" type="button" aria-label="NO">
+        <svg viewBox="0 0 150 60" aria-hidden="true">
+          <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <g transform="translate(14 12) scale(.8)">
+              <use href="#lN" stroke="#333" stroke-width="13"/><use href="#lN" stroke="#fff" stroke-width="8"/>
+              <g transform="translate(38 0)"><use href="#lO" stroke="#333" stroke-width="13"/><use href="#lO" stroke="#fff" stroke-width="8"/></g>
+            </g>
+          </g>
+          <g transform="translate(114 33)">
+            <path d="M-10 -8 L-13 -21 L-3 -13 Z" fill="#9B4FC7" stroke="#333" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M10 -8 L13 -21 L3 -13 Z" fill="#9B4FC7" stroke="#333" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle r="13" fill="#B67CE0" stroke="#333" stroke-width="3"/>
+            <path d="M-8 -4 L-2 -1 M8 -4 L2 -1" stroke="#333" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M-6 6 Q0 11 6 6" stroke="#333" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </section>
+</main>
+
+<section class="screen final" id="final" aria-live="polite" aria-hidden="true">
+  <svg class="scene" viewBox="0 0 380 480" role="img" aria-label="Il ragazzo felice con le braccia alzate e la scritta YEEEEE">
+    <circle cx="62" cy="62" r="26" fill="#FFD93B" stroke="#F4A300" stroke-width="3"/>
+    <g stroke="#F4A300" stroke-width="4" stroke-linecap="round">
+      <line x1="62" y1="22" x2="62" y2="12"/><line x1="62" y1="102" x2="62" y2="112"/>
+      <line x1="22" y1="62" x2="12" y2="62"/><line x1="102" y1="62" x2="112" y2="62"/>
+      <line x1="34" y1="34" x2="27" y2="27"/><line x1="90" y1="90" x2="97" y2="97"/>
+      <line x1="90" y1="34" x2="97" y2="27"/><line x1="34" y1="90" x2="27" y2="97"/>
+    </g>
+    <path d="M262 66 Q250 66 252 54 Q254 42 268 46 Q274 30 292 38 Q306 32 312 48 Q330 48 328 62 Q328 72 316 70 L270 70 Q262 72 262 66 Z" fill="#CFE8FF" stroke="#5BA7E8" stroke-width="3"/>
+
+    <g stroke="#333" stroke-width="1.5" stroke-linejoin="round">
+      <circle class="conf" style="--d:.05" cx="28" cy="152" r="4.5" fill="#FFD93B"/>
+      <circle class="conf" style="--d:.35" cx="352" cy="152" r="4.5" fill="#FF6F91"/>
+      <circle class="conf" style="--d:.2" cx="24" cy="222" r="4.5" fill="#5BA7E8"/>
+      <circle class="conf" style="--d:.5" cx="358" cy="228" r="4.5" fill="#4CAF50"/>
+      <circle class="conf" style="--d:.65" cx="110" cy="205" r="3.5" fill="#FF6F91"/>
+      <circle class="conf" style="--d:.15" cx="272" cy="198" r="3.5" fill="#FFD93B"/>
+      <circle class="conf" style="--d:.45" cx="86" cy="268" r="3.5" fill="#9B6BD6"/>
+      <circle class="conf" style="--d:.8" cx="300" cy="262" r="3.5" fill="#F29A1F"/>
+      <circle class="conf" style="--d:.3" cx="346" cy="318" r="4" fill="#5BA7E8"/>
+      <rect class="conf" style="--d:.1" x="340" y="128" width="9" height="9" rx="1.5" transform="rotate(20 344 132)" fill="#5BA7E8"/>
+      <rect class="conf" style="--d:.4" x="18" y="186" width="9" height="9" rx="1.5" transform="rotate(-18 22 190)" fill="#4CAF50"/>
+      <rect class="conf" style="--d:.55" x="348" y="268" width="9" height="9" rx="1.5" transform="rotate(25 352 272)" fill="#F29A1F"/>
+      <rect class="conf" style="--d:.7" x="326" y="360" width="9" height="9" rx="1.5" transform="rotate(-15 330 364)" fill="#9B6BD6"/>
+      <rect class="conf" style="--d:.25" x="132" y="190" width="8" height="8" rx="1.5" transform="rotate(-25 136 194)" fill="#4CAF50"/>
+      <rect class="conf" style="--d:.6" x="252" y="236" width="8" height="8" rx="1.5" transform="rotate(15 256 240)" fill="#5BA7E8"/>
+      <path class="conf" style="--d:.2" d="M52 246 L58 236 L64 246 Z" fill="#9B6BD6"/>
+      <path class="conf" style="--d:.5" d="M318 196 L324 186 L330 196 Z" fill="#F29A1F"/>
+      <path class="conf" style="--d:.75" d="M334 298 L340 288 L346 298 Z" fill="#E8453C"/>
+      <path class="conf" style="--d:.35" d="M96 232 L102 222 L108 232 Z" fill="#FFD93B"/>
+      <path class="conf" style="--d:.9" d="M330 400 L336 390 L342 400 Z" fill="#4CAF50"/>
+    </g>
+    <g fill="none" stroke-width="3" stroke-linecap="round">
+      <path class="conf" style="--d:.3" d="M296 100 q6 -8 12 0 t12 0" stroke="#E8453C"/>
+      <path class="conf" style="--d:.45" d="M122 104 q6 -8 12 0 t12 0" stroke="#2F7FD8"/>
+      <path class="conf" style="--d:.6" d="M300 330 q6 -8 12 0 t12 0" stroke="#9B6BD6"/>
+      <path class="conf" style="--d:.1" d="M40 294 q6 -8 12 0 t12 0" stroke="#4CAF50"/>
+    </g>
+
+    <g transform="rotate(-2 190 145)" stroke="#E8453C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <g transform="translate(47 116) scale(1.3)">
+        <g class="pop" style="--i:0"><use href="#lY" transform="rotate(-3 15 22)"/></g>
+        <g class="pop" style="--i:1"><use href="#lE" transform="translate(38 -3) rotate(2 15 22)"/></g>
+        <g class="pop" style="--i:2"><use href="#lE" transform="translate(76 2) rotate(-2 15 22)"/></g>
+        <g class="pop" style="--i:3"><use href="#lE" transform="translate(114 -3) rotate(3 15 22)"/></g>
+        <g class="pop" style="--i:4"><use href="#lE" transform="translate(152 2) rotate(-3 15 22)"/></g>
+        <g class="pop" style="--i:5"><use href="#lE" transform="translate(190 -2) rotate(2 15 22)"/></g>
+      </g>
+    </g>
+
+    <line x1="30" y1="300" x2="30" y2="462" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(0 42)">
+      <path d="M32 260 L94 258 L96 298 L33 300 Z" fill="#FFFFFF" stroke="#333" stroke-width="2.5" stroke-linejoin="round"/>
+      <g fill="#D62B2B"><rect x="33" y="260" width="62" height="5"/><rect x="33" y="270" width="63" height="5"/><rect x="33" y="280" width="63" height="5"/><rect x="33" y="290" width="63" height="5"/></g>
+      <rect x="33" y="260" width="28" height="22" fill="#2F5FB8" stroke="#333" stroke-width="2"/>
+      <g fill="#FFFFFF"><circle cx="40" cy="266" r="1.8"/><circle cx="48" cy="266" r="1.8"/><circle cx="55" cy="266" r="1.8"/><circle cx="44" cy="272" r="1.8"/><circle cx="52" cy="272" r="1.8"/><circle cx="40" cy="278" r="1.8"/><circle cx="48" cy="278" r="1.8"/><circle cx="55" cy="278" r="1.8"/></g>
+    </g>
+
+    <path d="M10 466 Q30 454 50 466 Q70 454 90 466 Q110 454 130 466 Q150 454 170 466 Q190 454 210 466 Q230 454 250 466 Q270 454 290 466 Q310 454 330 466 Q350 454 370 466" stroke="#4CAF50" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <g class="boy"><g transform="translate(190 455) scale(1.7) translate(-250 -388)">
+      <path d="M236 346 L264 346 L262 388 L252 388 L250 362 L248 388 L238 388 Z" fill="#1F3A68" stroke="#333" stroke-width="2.8" stroke-linejoin="round"/>
+      <circle cx="250" cy="290" r="16" fill="#F0B98A" stroke="#333" stroke-width="2.8"/>
+      <path d="M234 288 Q234 280 238 280 L262 280 Q266 280 266 288 Q262 284 250 283 Q238 284 234 288 Z" fill="#3A2415"/>
+      <path d="M236 277 Q235 262 250 262 Q265 262 264 277 Z" fill="#FFFFFF" stroke="#333" stroke-width="2.4" stroke-linejoin="round"/>
+      <rect x="239" y="273" width="22" height="7" rx="2" fill="#ECECEC" stroke="#333" stroke-width="1.9" stroke-linejoin="round"/>
+      <g fill="#333"><circle cx="243.5" cy="276.5" r="0.8"/><circle cx="247.8" cy="276.5" r="0.8"/><circle cx="252.2" cy="276.5" r="0.8"/><circle cx="256.5" cy="276.5" r="0.8"/></g>
+      <path d="M242 292 Q245 287.5 248 292 M252 292 Q255 287.5 258 292" stroke="#333" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="239" cy="297" r="2.4" fill="#FF9FB3" opacity="0.8"/><circle cx="261" cy="297" r="2.4" fill="#FF9FB3" opacity="0.8"/>
+      <path d="M243 297 Q250 307 257 297 Z" fill="#B33A3A" stroke="#333" stroke-width="1.4" stroke-linejoin="round"/>
+      <g fill="#3A2415"><circle cx="240" cy="300" r="1"/><circle cx="260" cy="300" r="1"/><circle cx="242" cy="304" r="1"/><circle cx="258" cy="304" r="1"/></g>
+      <path d="M236 308 L264 308 L268 348 L232 348 Z" fill="#8B5A3C" stroke="#333" stroke-width="2.8" stroke-linejoin="round"/>
+      <line x1="243" y1="312.5" x2="257" y2="312.5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="butt"/>
+      <g fill="none" stroke="#333" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+        <path id="armL" d="M237 316 L229 336 L228 358">
+          <animate id="armLa" attributeName="d" begin="indefinite" dur=".7s" fill="freeze" calcMode="linear" keyTimes="0;.65;1"
+                   values="M237 316 L229 336 L228 358;M237 316 L217 288 L214 236;M237 316 L219 290 L216 244"/>
+        </path>
+        <path id="armR" d="M263 316 L271 336 L272 358">
+          <animate id="armRa" attributeName="d" begin="indefinite" dur=".7s" fill="freeze" calcMode="linear" keyTimes="0;.65;1"
+                   values="M263 316 L271 336 L272 358;M263 316 L283 288 L286 236;M263 316 L281 290 L284 244"/>
+        </path>
+      </g>
+      <g class="sparks" fill="none" stroke="#F29A1F" stroke-width="1.6" stroke-linecap="round">
+        <path d="M208 238 L203 234 M216 235 L215 228 M224 238 L229 234"/>
+        <path d="M292 238 L297 234 M284 235 L285 228 M276 238 L271 234"/>
+      </g>
+    </g></g>
+  </svg>
+</section>
+
+<div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Audio attivo, tocca per disattivarlo">
+  <svg viewBox="0 0 28 28" aria-hidden="true">
+    <path d="M4 11 H9 L15 6 V22 L9 17 H4 Z" fill="#333" stroke="#333" stroke-width="1.5" stroke-linejoin="round"/>
+    <g class="waves" fill="none" stroke="#333" stroke-width="2.4" stroke-linecap="round"><path d="M18.5 10 Q21.5 14 18.5 18"/><path d="M21.5 7 Q26.5 14 21.5 21"/></g>
+    <g class="mute" fill="none" stroke="#E8453C" stroke-width="2.6" stroke-linecap="round"><path d="M19 10 L25 18 M25 10 L19 18"/></g>
+  </svg>
+</button>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ===== Impostazioni facili da cambiare ===== */
+  const MAX_DODGES = 7;                     // quante volte il NO scappa prima di rompersi
+  const MSG_FROM = 3;                       // dal tentativo numero... compaiono i messaggi
+  const MSGS = [
+    'Dai, non fare così! 🥺',
+    'Sei proprio sicura?',
+    'Guarda che il SÌ intanto cresce… 👀',
+    'Ultima occasione, eh!'
+  ];
+  const BROKEN_MSG = 'Ormai resta solo il SÌ ❤️';
+  const BROKEN_HTML =
+    'Oh noo! Hai rotto il bottone del NO ' +
+    '<svg viewBox="-14 -14 28 28" aria-hidden="true">' +
+    '<circle r="12" fill="#FFD93B" stroke="#333" stroke-width="2.5"/>' +
+    '<path d="M-6 -3 L-6 -3.1 M6 -3 L6 -3.1" stroke="#333" stroke-width="3.2" stroke-linecap="round"/>' +
+    '<path d="M-6 7 Q0 1 6 7" stroke="#333" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+    '<path d="M-8.5 0 q-2 3 0 5 q2 -2 0 -5 Z" fill="#5BA7E8" stroke="#333" stroke-width="1"/></svg>';
+
+  const $ = id => document.getElementById(id);
+  const card = $('card'), yes = $('yes'), no = $('no');
+  const finalEl = $('final'), soundBtn = $('sound'), bubble = $('bubble');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let attempts = 0;
+  let phase = 'dodge';       // 'dodge' -> 'broken'
+  let detached = false;
+  let celebrated = false;
+  let soundOn = true;
+  let msgTimer = 0;
+
+  /* ===== Messaggi divertenti ===== */
+  function say(text, sticky) {
+    clearTimeout(msgTimer);
+    bubble.classList.remove('show');
+    void bubble.offsetWidth;              // riavvia l'animazione
+    bubble.textContent = text;
+    bubble.classList.add('show');
+    if (!sticky) msgTimer = setTimeout(() => bubble.classList.remove('show'), 2600);
+  }
+  function hideSay() { clearTimeout(msgTimer); bubble.classList.remove('show'); }
+
+  /* ===== Audio (Web Audio, nessun file esterno) ===== */
+  let actx = null;
+  function ensureAudio() {
+    if (!actx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) { try { actx = new AC(); } catch (e) { actx = null; } }
+    }
+    if (actx && actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+  function tone(freq, start, dur, type, vol) {
+    const t0 = actx.currentTime + start;
+    const o = actx.createOscillator();
+    const g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+  function playChime() {
+    if (!soundOn || !ensureAudio()) return;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * 0.13, 1.1, 'triangle', 0.16));
+    tone(1318.5, 0.62, 1.4, 'sine', 0.1);
+    tone(1568, 0.78, 1.4, 'sine', 0.07);
+  }
+  function playPop() {
+    if (!soundOn || !ensureAudio()) return;
+    const t0 = actx.currentTime;
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(620, t0);
+    o.frequency.exponentialRampToValueAtTime(260, t0 + 0.12);
+    g.gain.setValueAtTime(0.09, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.14);
+    o.connect(g); g.connect(actx.destination);
+    o.start(t0); o.stop(t0 + 0.16);
+  }
+  function playSad() {
+    if (!soundOn || !ensureAudio()) return;
+    tone(392.0, 0, 0.5, 'sine', 0.13);
+    tone(311.13, 0.28, 0.6, 'sine', 0.13);
+    tone(261.63, 0.58, 1.0, 'sine', 0.13);
+  }
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.classList.toggle('off', !soundOn);
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    soundBtn.setAttribute('aria-label', soundOn ? 'Audio attivo, tocca per disattivarlo' : 'Audio disattivato, tocca per attivarlo');
+    if (soundOn) { ensureAudio(); playPop(); }
+  });
+
+  const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
+
+  /* ===== Il NO che scappa ===== */
+  function detachNo() {
+    if (detached) return;
+    const r = no.getBoundingClientRect();
+    no.style.transition = 'none';
+    no.style.width = r.width + 'px';
+    no.style.height = r.height + 'px';
+    no.classList.add('free');
+    no.style.transform = `translate(${r.left}px, ${r.top}px)`;
+    void no.offsetWidth;
+    no.style.transition = '';
+    detached = true;
+  }
+
+  function pickSpot(px, py) {
+    const bw = no.offsetWidth, bh = no.offsetHeight, m = 14;
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    const maxX = Math.max(m, vw - bw - m), maxY = Math.max(m, vh - bh - m);
+    const yr = yes.getBoundingClientRect();
+    let best = { x: m, y: m }, bestScore = -Infinity;
+    for (let i = 0; i < 28; i++) {
+      const x = m + Math.random() * (maxX - m);
+      const y = m + Math.random() * (maxY - m);
+      const d = Math.hypot(x + bw / 2 - px, y + bh / 2 - py);
+      const over = x < yr.right && x + bw > yr.left && y < yr.bottom && y + bh > yr.top;
+      const score = Math.min(d, 280) - (over ? 140 : 0) + Math.random() * 25;
+      if (score > bestScore) { bestScore = score; best = { x, y }; }
+    }
+    return best;
+  }
+
+  function growYes() {
+    const p = Math.min(attempts / MAX_DODGES, 1);
+    yes.style.setProperty('--p', p.toFixed(3));
+  }
+
+  function attempt(px, py) {
+    if (celebrated) return;
+    attempts++;
+    growYes();
+    playPop();
+    buzz(14);
+
+    if (attempts >= MAX_DODGES) { breakNo(); return; }
+    if (attempts >= MSG_FROM) say(MSGS[Math.min(attempts - MSG_FROM, MSGS.length - 1)]);
+    detachNo();
+    const spot = pickSpot(px, py);
+    no.style.transform = `translate(${spot.x}px, ${spot.y}px)`;
+  }
+
+  function clampNo() {
+    const bw = no.offsetWidth, bh = no.offsetHeight, m = 14;
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    const cur = new DOMMatrixReadOnly(getComputedStyle(no).transform);
+    const x = Math.min(Math.max(m, cur.m41), Math.max(m, vw - bw - m));
+    const y = Math.min(Math.max(m, cur.m42), Math.max(m, vh - bh - m));
+    no.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  function brokenSpot() {
+    const cr = card.getBoundingClientRect();
+    const bw = no.offsetWidth, bh = no.offsetHeight, m = 14;
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    const x = Math.min(Math.max(m, (vw - bw) / 2), Math.max(m, vw - bw - m));
+    let y = cr.bottom + 18;
+    if (y + bh > vh - m) y = Math.max(m, cr.top - bh - 18);
+    return { x, y };
+  }
+  function placeBroken() {
+    const s = brokenSpot();
+    no.style.transform = `translate(${s.x}px, ${s.y}px)`;
+  }
+
+  function breakNo() {
+    phase = 'broken';
+    detachNo();
+    no.style.width = 'auto';
+    no.style.height = 'auto';
+    no.innerHTML = BROKEN_HTML;
+    no.classList.add('broken');
+    no.removeAttribute('aria-label');
+    no.disabled = true;
+    no.setAttribute('aria-disabled', 'true');
+    playSad();
+    say(BROKEN_MSG, true);                       // resta finché non premi SÌ
+    buzz([60, 40, 120]);
+    clampNo();
+    setTimeout(() => { if (!celebrated) placeBroken(); }, 900);
+  }
+
+  function centerOf(el) {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  }
+
+  no.addEventListener('pointerenter', e => {
+    if (phase === 'dodge' && e.pointerType === 'mouse') attempt(e.clientX, e.clientY);
+  });
+  no.addEventListener('pointerdown', e => {
+    if (phase === 'dodge' && e.pointerType !== 'mouse') {
+      e.preventDefault();
+      attempt(e.clientX, e.clientY);
+    }
+  });
+  no.addEventListener('touchstart', e => {
+    if (phase === 'dodge') e.preventDefault();
+  }, { passive: false });
+  no.addEventListener('click', e => {
+    if (phase !== 'dodge') return;
+    e.preventDefault();
+    const [cx, cy] = centerOf(no);
+    attempt(cx, cy);
+  });
+
+  window.addEventListener('resize', () => {
+    resizeFx();
+    if (!detached) return;
+    if (phase === 'broken') placeBroken(); else clampNo();
+  });
+
+  /* ===== SI ===== */
+  yes.addEventListener('click', () => { ensureAudio(); celebrate(); });
+
+  function celebrate() {
+    if (celebrated) return;
+    celebrated = true;
+    hideSay();
+    card.classList.add('out');
+    no.style.visibility = 'hidden';
+    no.style.pointerEvents = 'none';
+    finalEl.classList.add('show');
+    finalEl.setAttribute('aria-hidden', 'false');
+    playChime();
+    buzz([30, 50, 30, 50, 120]);
+    startFx();
+    liftArms();
+  }
+
+  const UP_L = 'M237 316 L219 290 L216 244', UP_R = 'M263 316 L281 290 L284 244';
+  function liftArms() {
+    const delay = reduceMotion ? 50 : 1750;
+    setTimeout(() => {
+      try { $('armLa').beginElement(); $('armRa').beginElement(); } catch (e) {}
+    }, delay);
+    setTimeout(() => {
+      $('armL').setAttribute('d', UP_L);
+      $('armR').setAttribute('d', UP_R);
+    }, delay + 1200);
+  }
+
+  /* ===== Cuori e coriandoli ===== */
+  const fx = $('fx'), ctx = fx.getContext('2d');
+  let W = 0, H = 0, DPR = 1;
+  function resizeFx() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    fx.width = Math.round(W * DPR); fx.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  resizeFx();
+
+  const HEART = [];
+  for (let i = 0; i < 40; i++) {
+    const t = (i / 40) * Math.PI * 2;
+    HEART.push([
+      16 * Math.pow(Math.sin(t), 3) / 17,
+      -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 17
+    ]);
+  }
+  const HEART_COLORS = ['#FF6F91', '#E8453C', '#FF8FA8', '#FF5C7A', '#FFB3C4'];
+  const CONF_COLORS  = ['#FFD93B', '#5BA7E8', '#4CAF50', '#FF6F91', '#9B6BD6', '#F29A1F', '#E8453C'];
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = arr => arr[(Math.random() * arr.length) | 0];
+
+  const parts = [];
+  let raf = 0, last = 0, spawnUntil = 0;
+  const density = reduceMotion ? 0.4 : 1;
+
+  function addHeart(x, y, vy) {
+    parts.push({ k: 'h', x, y, vx: rnd(-0.5, 0.5), vy, s: rnd(14, 30), c: pick(HEART_COLORS),
+      r: rnd(-0.5, 0.5), vr: rnd(-0.03, 0.03), sw: rnd(0, 6.28), sa: rnd(0.4, 1.1) });
+  }
+  function addConfetti(x, y, burst) {
+    const a = burst ? rnd(-Math.PI, 0) : Math.PI / 2 + rnd(-0.5, 0.5);
+    const sp = burst ? rnd(4, 13) : rnd(1.5, 3.5);
+    parts.push({ k: 'c', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, w: rnd(7, 12), h: rnd(5, 8),
+      c: pick(CONF_COLORS), r: rnd(0, 6.28), vr: rnd(-0.3, 0.3), g: burst ? 0.22 : 0.05 });
+  }
+  function burstAt(x, y, n) { for (let i = 0; i < n * density; i++) addConfetti(x, y, true); }
+
+  function drawHeart(p) {
+    ctx.save();
+    ctx.translate(p.x, p.y); ctx.rotate(p.r);
+    ctx.fillStyle = p.c; ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    const s = p.s / 2;
+    HEART.forEach(([hx, hy], i) => { i ? ctx.lineTo(hx * s, hy * s) : ctx.moveTo(hx * s, hy * s); });
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function frame(ts) {
+    const dt = Math.min((ts - last) / 16.67 || 1, 3);
+    last = ts;
+    ctx.clearRect(0, 0, W, H);
+
+    if (ts < spawnUntil) {
+      if (Math.random() < 0.45 * dt * density) addHeart(rnd(0, W), -24, rnd(1.6, 3.8));
+      if (Math.random() < 0.4 * dt * density) addConfetti(rnd(0, W), -10, false);
+    }
+
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      if (p.k === 'h') {
+        p.sw += 0.04 * dt;
+        p.x += (p.vx + Math.sin(p.sw) * p.sa) * dt;
+        p.y += p.vy * dt;
+        p.r += p.vr * dt;
+        drawHeart(p);
+      } else {
+        p.vy += p.g * dt;
+        p.vx *= 0.995;
+        p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.fillStyle = p.c; ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.strokeRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      if (p.y > H + 50 || p.x < -60 || p.x > W + 60) parts.splice(i, 1);
+    }
+
+    if (parts.length || ts < spawnUntil) raf = requestAnimationFrame(frame);
+    else { raf = 0; ctx.clearRect(0, 0, W, H); }
+  }
+
+  function startFx() {
+    resizeFx();
+    spawnUntil = performance.now() + (reduceMotion ? 3500 : 9000);
+    burstAt(W / 2, H * 0.55, 90);
+    setTimeout(() => burstAt(W * 0.2, H * 0.6, 50), 450);
+    setTimeout(() => burstAt(W * 0.8, H * 0.6, 50), 700);
+    setTimeout(() => burstAt(W / 2, H * 0.45, 70), 1800);
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+  }
+})();
+</script>
+</body>
+</html>
